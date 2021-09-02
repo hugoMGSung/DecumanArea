@@ -3,6 +3,7 @@ using DecumanMRP.UserControls;
 using DecumanMRP.Views;
 using Krypton.Docking;
 using Krypton.Navigator;
+using Krypton.Ribbon;
 using Krypton.Toolkit;
 using System;
 using System.Collections.Generic;
@@ -19,15 +20,30 @@ namespace DecumanMRP
 {
     public partial class MainForm : KryptonForm //Form
     {
+        #region Instance Fields
+
         private int _count = 1;
+        private NavigatorMode _cellMode;
+        private KryptonRibbonGroupButton[] _paletteButtons;
+        private KryptonRibbonGroupButton[] _groupingButtons;
+
+        #endregion
 
         public MainForm()
         {
             InitializeComponent();
 
+            //_paletteButtons = new KryptonRibbonGroupButton[]{button2010Blue, button2010Silver, button2010Black,
+            //                                                 button2007Blue, button2007Silver, button2007Black,
+            //                                                 buttonSparkleBlue, buttonSparkleOrange, buttonSparklePurple,
+            //                                                 buttonSystem, button2003};
+
+            //_groupingButtons = new KryptonRibbonGroupButton[]{buttonTabs, buttonRibbonTabs, buttonButtons,
+            //                                                  buttonHeader, buttonHeaderButtons, buttonStack};
+
             #region SplashScreen 시작
 
-            int sleepTime = 2000;
+            int sleepTime = 1000;
             Thread splashThread = new Thread(LoadingScreen.ShowSplashScreen);
             splashThread.IsBackground = true;
             splashThread.Start();
@@ -53,27 +69,32 @@ namespace DecumanMRP
 
             #endregion
 
-
             #region Loading 2
 
-            LoadingScreen.UdpateStatusText("Loading 2..");
+            //LoadingScreen.UdpateStatusText("Loading 2..");
 
-            try
-            {
-                Thread.Sleep(sleepTime);
-                LoadingScreen.UdpateStatusTextWithStatus("Loading 2 OK", TypeOfMessage.Success);
-                Thread.Sleep(sleepTime);
-            }
-            catch (System.Exception ex)
-            {
-                LoadingScreen.UdpateStatusTextWithStatus("Loading 2 Fail", TypeOfMessage.Error);
-                Environment.Exit(0);
-            }
+            //try
+            //{
+            //    Thread.Sleep(sleepTime);
+            //    LoadingScreen.UdpateStatusTextWithStatus("Loading 2 OK", TypeOfMessage.Success);
+            //    Thread.Sleep(sleepTime);
+            //}
+            //catch (System.Exception ex)
+            //{
+            //    LoadingScreen.UdpateStatusTextWithStatus("Loading 2 Fail", TypeOfMessage.Error);
+            //    Environment.Exit(0);
+            //}
 
             #endregion
 
-
             LoadingScreen.CloseSplashScreen();
+
+            var loginForm = new LoginForm();
+            var result = loginForm.ShowDialog();
+            if (result != DialogResult.OK)
+            {
+                Application.Exit();
+            }
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -110,6 +131,14 @@ namespace DecumanMRP
             return NewPage("Document View", 0, new CntDocumentView());
         }
 
+        /// <summary>
+        /// 페이지 생성하는 메서드. 프로젝트와 메인, 프로퍼티와 아래 콘솔별로 다시 처리해야 함
+        /// _count 번호 등...
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="image"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
         private KryptonPage NewPage(string name, int image, Control content)
         {
             // Create new page with title and image
@@ -128,6 +157,41 @@ namespace DecumanMRP
 
             _count++;
             return p;
+        }
+
+        private void BtnRbnNewWindow_Click(object sender, EventArgs e)
+        {
+            AddMDIChildWindow();
+        }
+
+        private void BtnRbnCloseWindow_Click(object sender, EventArgs e)
+        {
+            KdmMain.RemovePage("Document View6", true);
+        }
+
+        private void BtnRbnCloseAllWindow_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnRbnCascade_Click(object sender, EventArgs e)
+        {
+            LayoutMdi(MdiLayout.Cascade);
+        }
+
+        private void BtnRbnTileHorizontal_Click(object sender, EventArgs e)
+        {
+            LayoutMdi(MdiLayout.TileHorizontal);
+        }
+
+        private void BtnRbnTileVertical_Click(object sender, EventArgs e)
+        {
+            LayoutMdi(MdiLayout.TileVertical);
+        }
+
+        private void AddMDIChildWindow()
+        {
+            KdmMain.AddToWorkspace("Workspace", new KryptonPage[] { NewDocumentView() });
         }
     }
 }
