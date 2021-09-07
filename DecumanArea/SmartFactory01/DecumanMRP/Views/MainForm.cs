@@ -5,6 +5,7 @@ using Krypton.Docking;
 using Krypton.Navigator;
 using Krypton.Ribbon;
 using Krypton.Toolkit;
+using Krypton.Workspace;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -33,10 +34,10 @@ namespace DecumanMRP
         {
             InitializeComponent();
 
-            //_paletteButtons = new KryptonRibbonGroupButton[]{button2010Blue, button2010Silver, button2010Black,
-            //                                                 button2007Blue, button2007Silver, button2007Black,
-            //                                                 buttonSparkleBlue, buttonSparkleOrange, buttonSparklePurple,
-            //                                                 buttonSystem, button2003};
+            _paletteButtons = new KryptonRibbonGroupButton[] { Btn2010Blue, Btn2010Silver, Btn2010Black,
+                                                               Btn2007Blue, Btn2007Silver, Btn2007Black,
+                                                               BtnSparkleBlue, BtnSparkleOrange, BtnSparklePurple,
+                                                               BtnSystem, Btn2003Normal };
 
             //_groupingButtons = new KryptonRibbonGroupButton[]{buttonTabs, buttonRibbonTabs, buttonButtons,
             //                                                  buttonHeader, buttonHeaderButtons, buttonStack};
@@ -192,6 +193,41 @@ namespace DecumanMRP
         private void AddMDIChildWindow()
         {
             KdmMain.AddToWorkspace("Workspace", new KryptonPage[] { NewDocumentView() });
+        }
+
+        private void BtnPalette_Clicked(object sender, EventArgs e)
+        {
+            KryptonRibbonGroupButton button = (KryptonRibbonGroupButton)sender;
+            KmnMain.GlobalPaletteMode = (PaletteModeManager)Enum.Parse(typeof(PaletteModeManager), (string)button.Tag);
+            UpdateButtonsFromPalette();
+        }
+
+        private void UpdateButtonsFromPalette()
+        {
+            // Get the string representation of the global palette
+            string mode = KmnMain.GlobalPaletteMode.ToString();
+
+            // Check the palette button that matches the global palette
+            foreach (KryptonRibbonGroupButton button in _paletteButtons)
+                button.Checked = (button.Tag.ToString().Equals(mode));
+        }
+
+        private void BtnGrouping_Clicked(object sender, EventArgs e)
+        {
+            KryptonRibbonGroupButton button = (KryptonRibbonGroupButton)sender;
+            _cellMode = (NavigatorMode)Enum.Parse(typeof(NavigatorMode), (string)button.Tag);
+            //UpdateCellsFromGrouping();
+            //UpdateButtonsFromGrouping();
+        }
+
+        private void UpdateCellsFromGrouping()
+        {
+            /*KryptonWorkspaceCell cell = KryptonDockableWorkspace.FirstCell();
+            while (cell != null)
+            {
+                cell.NavigatorMode = _cellMode;
+                cell = kryptonWorkspace.NextCell(cell);
+            }*/
         }
     }
 }
